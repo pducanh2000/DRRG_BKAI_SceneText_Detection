@@ -1,0 +1,1 @@
+# DRRG_BKAI_SceneText_Detection
