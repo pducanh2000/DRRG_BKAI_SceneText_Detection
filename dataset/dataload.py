@@ -3,6 +3,7 @@ import cv2
 import torch
 import numpy as np
 from PIL import Image
+import cv2
 from util.config import config as cfg
 from layers.proposal_layer import ProposalTarget
 from util.misc import find_bottom, find_long_edges, split_edge_seqence, \
@@ -10,10 +11,8 @@ from util.misc import find_bottom, find_long_edges, split_edge_seqence, \
 
 
 def pil_load_img(path):
-    image = Image.open(path)
-    image = np.array(image)
+    image = cv2.imread(path)
     return image
-
 
 class TextInstance(object):
     def __init__(self, points, orient, text):

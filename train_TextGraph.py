@@ -176,16 +176,12 @@ def main():
         )
         valset = None
     elif cfg.exp_name == "BKAI":
-        train_set = BKAIText(
+        trainset = BKAIText(
             data_path="data/",
             is_training = True,
-            transform = Augmaentation(size=cfg.input_size, mean=cfg.means, std=cfg.stds)
-        )
-        valset = BKAIText(
-            data_path = "data/",
-            is_training = False,
             transform = Augmentation(size=cfg.input_size, mean=cfg.means, std=cfg.stds)
         )
+        val_set = None
     else:
         print("dataset name is not correct")
 

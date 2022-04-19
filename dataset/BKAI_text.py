@@ -1,12 +1,8 @@
-import re
 import os
 import numpy as np
 from glob import glob
-from sklearn.model_selection import train_test_split
-from utils import strs
 from dataset.data_util import pil_load_img
-from dataset.dataload import Text_dataset, TextInstance
-from util.io import readlines
+from dataset.dataload import TextDataset, TextInstance
 from util.misc import norm2
 
 
@@ -14,14 +10,13 @@ class BKAIText(TextDataset):
 
     def __init__(self, data_path, is_training=True, transform=None, ignore_list=None):
         super(BKAIText, self).__init__(transform, is_training)
-        self.data_path = data_path 
-        self.data_list = self.export_data(self.data_path)
+        self.data_path = data_path
         self.is_training = is_training
 
         if is_training:
-            self.train_list, self.val_list = train_test_split(self.data_list, shuffle=True,
-                                                              test_size=0.25, random_state=2000)
-
+            # self.train_list, self.val_list = train_test_split(self.data_list, shuffle=True,
+            #                                                   test_size=0.25, random_state=2000)
+            self.train_list = self.export_data(self.data_path)
         else:
             self.test_list = glob(data_path + "/*.jpg")
 
@@ -47,6 +42,7 @@ class BKAIText(TextDataset):
                 polygons.append(TextInstance(pts, 'c', text_label))
 
         return polygons
+
     def export_data(self, data_folder):
         data = []
 
@@ -55,7 +51,7 @@ class BKAIText(TextDataset):
         BKAI_gt_folder = os.path.join(data_folder, "training_gt/")
 
         for gt_file in os.listdir(BKAI_gt_folder):
-            image_file = gt_file[3:-4] + ".jpg" 
+            image_file = gt_file[3:-4] + ".jpg"
             item = {}
             item["image_path"] = os.path.join(BKAI_img_folder, image_file)
             item["gt_path"] = os.path.join(BKAI_gt_folder, gt_file)
@@ -67,7 +63,7 @@ class BKAIText(TextDataset):
 
         for image_file in list_images:
             image_idx = int(image_file.split("/")[-1][2:-4])
-            gt_file = "".join(["gt_", str(image_idx), ".txt"]) 
+            gt_file = "".join(["gt_", str(image_idx), ".txt"])
             item = {}
             item["image_path"] = image_file
             item["gt_path"] = os.path.join(VINAI_gt_folder, gt_file)
@@ -87,6 +83,14 @@ class BKAIText(TextDataset):
             except:
                 polygons = None
         else:
-             return self.test_list[index]
+            return self.test_list[index]
 
         return self.get_training_data(image, polygons, image_path.split("/")[-1], image_path)
+
+    def __len__(self):
+        if self.is_training:
+            length = len(self.train_list)
+        else:
+            length = len(self.test_list)
+
+        return length

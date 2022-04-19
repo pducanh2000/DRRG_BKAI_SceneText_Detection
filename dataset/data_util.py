@@ -1,8 +1,6 @@
-from PIL import Image
-import numpy as np
+import cv2
 
 
 def pil_load_img(path):
-    image = Image.open(path)
-    image = np.array(image)
+    image = cv2.imread(path)
     return image
